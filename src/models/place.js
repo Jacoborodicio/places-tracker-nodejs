@@ -1,10 +1,9 @@
 const mongoose = require('mongoose');
-const { Schema } = mongoose;
 
-const placeSchema = new Schema({
+const PlaceSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true
+        required: false
     },
     image: String,
     imageDescription: String,
@@ -14,15 +13,15 @@ const placeSchema = new Schema({
     lastTimeVisited: Date,
     description: {
         type: String,
-        required: true
+        required: false
     },
     address: String,
     distance: Number,
     distanceUnit: String,
     annotations: [{
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Annotation'
     }]
 });
 
-module.exports = mongoose.model('Place', placeSchema);
+module.exports = mongoose.model('Place', PlaceSchema);

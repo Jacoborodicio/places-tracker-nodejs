@@ -1,17 +1,18 @@
 const express = require('express');
-const placeSchema = require('../models/place');
+const PlaceSchema = require('../models/place');
 const annotationSchema = require('../models/annotation');
 const router = express.Router();
 const PlacesController = require('../controllers/users');
 // create a place
 router.post('/places', (req, res) => {
-    const place = placeSchema(req.body);
+    const place = PlaceSchema(req.body);
+    console.log(place);
     place.save().then((data) => res.json(data)).catch((error) => res.json({message: error}));
 })
 
 // get all places
 router.get('/places', (req, res) => {
-    placeSchema
+    PlaceSchema
         .find().populate('annotations')
         .then((data) => res.json(data))
         .catch((error) => res.json({message: error}));
@@ -21,18 +22,19 @@ router.get('/places', (req, res) => {
 router.get('/places/:id', (req, res) => {
     const {id} = req.params;
     console.log('File: place.js, Function: get by id, Line 23 --> req.params: ', req.params);
-    placeSchema
+    PlaceSchema
         .findById(id).populate('annotations')
         .then((data) => res.json(data))
         .catch((error) => res.json({message: error}));
 })
 
 // update place
-router.put('/places/:id', (req, res) => {
+router.patch('/places/:id', (req, res) => {
     const {id} = req.params;
-    const {name, description, rating} = req.body;
-    placeSchema
-        .updateOne({_id: id}, {$set: {name, description, rating}})
+    // TODO: Allow more fields update
+    const {name, description, rating, distance} = req.body;
+    PlaceSchema
+        .updateOne({_id: id}, {$set: {name, description, rating, distance}})
         .then((data) => res.json(data))
         .catch((error) => res.json({message: error}));
 })
@@ -40,8 +42,9 @@ router.put('/places/:id', (req, res) => {
 // Delete place by id
 router.delete('/places/:id', (req, res) => {
     const {id} = req.params;
-    placeSchema
-        .remove({ _id: id })
+    console.log('id inside place delete: ', id)
+    PlaceSchema
+        .deleteOne({ _id: id })
         .then((data) => res.json(data))
         .catch((error) => res.json({message: error}));
 })
@@ -49,11 +52,11 @@ router.delete('/places/:id', (req, res) => {
 // Create an annotation for a concrete place
 router.post('/places/:id/annotation', (req, res) => {
     const {id} = req.params;
-    placeSchema.findById(id)
+    PlaceSchema.findById(id)
         .then(data => {
             console.log('File: place.js, Function: then, Line 62 --> data: ', data);
             const annotation = annotationSchema(req.body);
-            const place = placeSchema(data);
+            const place = PlaceSchema(data);
             console.log('File: place.js, Function: post with annotation, Line 52 --> place, annotation: ', place, annotation);
             annotation.place = data;
             place.annotations.push(annotation);
@@ -70,7 +73,7 @@ router.post('/places/:id/annotation', (req, res) => {
 
 router.get('/places/:id/annotation', (req, res) => {
     const {id} = req.params;
-    placeSchema.findById(id).populate('annotations')
+    PlaceSchema.findById(id).populate('annotations')
         .then(response => res.json(response['annotations'])
             .catch(error => res.json({message: error})));
 
