@@ -2,10 +2,34 @@ const express = require('express');
 const UserSchema = require('../models/user');
 const router = express.Router();
 const UserController = require('../controllers/users');
+const bcrypt = require('bcrypt');
 // create user
-router.post('/users', (req, res) => {
-    const user = UserSchema(req.body);
-    user.save().then((data) => res.json(data)).catch((error) => res.json({message: error}));
+router.post('/users', async (req, res) => {
+    try {
+        // Generate a salt, so two same passwords don't generate same hash
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+        const user = new UserSchema({...req.body, password: hashedPassword});
+        const savedUser = await user.save();
+        res.json(savedUser);
+    } catch (err) {
+        res.status(500).json({error: err, errorCode: 500});
+    }
+})
+
+// login
+router.post('/users/login', async (req, res) => {
+    const user = await UserSchema.findOne({email: req.body.email});
+    // If the user email is not in DB
+    if (user == null) return res.status(400).json({errorCode: 400, message: `User with email ${req.body.email} not found`});
+    try {
+        if (await bcrypt.compare(req.body.password, user['password'])) {
+            res.status(200).json({user});
+        } else {
+            res.status(401).json({errorCode: 401, message: `Password for the user with email ${req.body.email} is incorrect`});
+        }
+    } catch (err) {
+        res.status(500).json({error: err, errorCode: 500, message: 'There was an error when trying to login'});
+    }
 })
 
 // get all users

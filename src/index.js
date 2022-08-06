@@ -5,9 +5,12 @@ require('dotenv').config();
 const userRoutes = require('./routes/user');
 const placeRoutes = require("./routes/place");
 const cors = require("cors");
-
+const auth = require("./auth/auth");
+const passport = require("passport");
 const app = express();
 const port = process.env.PORT || 9000;
+
+const isLoggedIn = (req, res, next) => req.user ? next() : res.sendStatus(401);
 
 // middleware
 app.use(cors());
@@ -20,6 +23,18 @@ app.use('/api/v1/', placeRoutes);
 app.get('/', (req, res) => {
     res.send("Welcome to my api");
 })
+
+app.get('/auth/google',
+    passport.authenticate('google', {scope: ['email', 'profile']}, () => {
+        console.log('WHATEVER')
+    })
+)
+app.get('/google/callback',
+    passport.authenticate('google', {
+        successRedirect: '/',
+
+    }))
+
 
 // Mongodb connection
 mongoose.connect(process.env.MONGODB_URI)

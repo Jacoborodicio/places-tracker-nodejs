@@ -15,8 +15,13 @@
     "mongoose": "^6.1.6"
   },
   "devDependencies": {
+    "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "express-promise-router": "^4.1.1",
-    "nodemon": "^2.0.15"
+    "express-session": "^1.17.3",
+    "jsonwebtoken": "^8.5.1",
+    "nodemon": "^2.0.15",
+    "passport": "^0.6.0",
+    "passport-google-oauth2": "^0.2.0"
   }
 }
