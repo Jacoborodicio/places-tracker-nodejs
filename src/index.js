@@ -1,15 +1,14 @@
 const express = require('express');
 const mongoose = require('mongoose');
-require('dotenv').config();
-
 const userRoutes = require('./routes/user');
 const placeRoutes = require("./routes/place");
+require('dotenv').config();
+
 const cors = require("cors");
 const auth = require("./auth/auth");
 const passport = require("passport");
 const app = express();
 const port = process.env.PORT || 9000;
-
 const isLoggedIn = (req, res, next) => req.user ? next() : res.sendStatus(401);
 
 // middleware

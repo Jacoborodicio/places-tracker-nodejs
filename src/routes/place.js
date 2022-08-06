@@ -3,17 +3,33 @@ const PlaceSchema = require('../models/place');
 const annotationSchema = require('../models/annotation');
 const router = express.Router();
 const PlacesController = require('../controllers/users');
+const jwt = require("jsonwebtoken");
+// const {authenticateToken} = require("../auth/auth");
+
+
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (token == null) return res.sendStatus(401);
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+        if (err) return res.sendStatus(403);
+        req.user = user
+        next()
+    })
+}
+
 // create a place
-router.post('/places', (req, res) => {
-    const place = PlaceSchema(req.body);
+router.post('/places', authenticateToken, (req, res) => {
+    const place = PlaceSchema({...req.body, userOwner: req.user._id});
     console.log(place);
     place.save().then((data) => res.json(data)).catch((error) => res.json({message: error}));
 })
 
 // get all places
-router.get('/places', (req, res) => {
+router.get('/places', authenticateToken, (req, res) => {
     PlaceSchema
-        .find().populate('annotations')
+        .find().where({}).populate('annotations')
         .then((data) => res.json(data))
         .catch((error) => res.json({message: error}));
 })

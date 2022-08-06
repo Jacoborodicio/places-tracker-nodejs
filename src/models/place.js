@@ -21,7 +21,8 @@ const PlaceSchema = new mongoose.Schema({
     annotations: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Annotation'
-    }]
+    }],
+    userOwner: String
 });
 
 module.exports = mongoose.model('Place', PlaceSchema);
