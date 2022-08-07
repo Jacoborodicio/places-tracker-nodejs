@@ -13,6 +13,9 @@ require('dotenv').config();
 app.use(cors());
 app.use(express.json());
 
+// TODO: Move tokens to DB!
+let refreshTokens = [];
+
 app.post('/login',  async (req, res) => {
     console.log('%c inside', 'color: #ecb1f2; font-style:italic');
     const user = await UserSchema.findOne({email: req.body.email});
@@ -23,6 +26,7 @@ app.post('/login',  async (req, res) => {
             const userJson = user.toJSON();
             const accessToken = generateAccessToken(userJson);
             const refreshToken = jwt.sign(userJson, process.env.REFRESH_TOKEN_SECRET);
+            refreshTokens = [...refreshTokens, refreshToken];
             // TODO: should we send the user? Info is already in the token...
             res.status(200).json({...userJson, accessToken, refreshToken});
         } else {
@@ -36,7 +40,18 @@ app.post('/login',  async (req, res) => {
 
 // TODO: Log out
 
+
 // TODO: Refresh tokens
+app.post('/token', (req, res) => {
+    const refreshToken = req.body.refreshToken;
+    if (refreshToken == null) return res.sendStatus(401);
+    if (!refreshTokens.includes(refreshToken)) return res.sendStatus(403);
+    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+        if (err) return res.sendStatus(403);
+        const accessToken = generateAccessToken(user);
+        return res.json({accessToken});
+    })
+})
 
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
