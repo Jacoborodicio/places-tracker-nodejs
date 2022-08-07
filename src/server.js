@@ -5,11 +5,10 @@ const placeRoutes = require("./routes/place");
 require('dotenv').config();
 
 const cors = require("cors");
-const auth = require("./auth/auth");
 const passport = require("passport");
 const app = express();
 const port = process.env.PORT || 9000;
-const isLoggedIn = (req, res, next) => req.user ? next() : res.sendStatus(401);
+// const isLoggedIn = (req, res, next) => req.user ? next() : res.sendStatus(401);
 
 // middleware
 app.use(cors());
@@ -31,13 +30,12 @@ app.get('/auth/google',
 app.get('/google/callback',
     passport.authenticate('google', {
         successRedirect: '/',
-
     }))
 
 
 // Mongodb connection
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('Connected to MongoDB Atlas'))
-    .catch((error) => console.log('File: index.js, Function: Error connecting to MongoDB Atlas, Line 17 --> error: ', error));
+    .catch((error) => console.log('File: server.js, Function: Error connecting to MongoDB Atlas, Line 17 --> error: ', error));
 
-app.listen(9000, () => console.log('Server running on port ', port));
+app.listen(port, () => console.log('Server running on port ', port));
