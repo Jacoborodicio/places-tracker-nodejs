@@ -24,7 +24,7 @@ app.post('/login',  async (req, res) => {
     try {
         if (await bcrypt.compare(req.body.password, user['password'])) {
             const userJson = user.toJSON();
-            const accessToken = generateAccessToken(userJson);
+            const accessToken = generateAccessToken({email: userJson.email});
             const refreshToken = jwt.sign(userJson, process.env.REFRESH_TOKEN_SECRET);
             refreshTokens = [...refreshTokens, refreshToken];
             // TODO: should we send the user? Info is already in the token...
@@ -48,7 +48,7 @@ app.post('/token', (req, res) => {
     if (!refreshTokens.includes(refreshToken)) return res.sendStatus(403);
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
         if (err) return res.sendStatus(403);
-        const accessToken = generateAccessToken(user);
+        const accessToken = generateAccessToken({email: user.email});
         return res.json({accessToken});
     })
 })
@@ -65,7 +65,7 @@ const authenticateToken = (req, res, next) => {
 }
 
 // TODO: Change to 10m-15m, 15s only for testing purposes
-const generateAccessToken = user => jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15s'});
+const generateAccessToken = user => jwt.sign({email: user.email}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15s'});
 
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('Connected to MongoDB Atlas'))
