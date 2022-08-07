@@ -39,7 +39,10 @@ app.post('/login',  async (req, res) => {
 })
 
 // TODO: Log out
-
+app.delete('/logout', (req, res) => {
+    refreshTokens = [...refreshTokens.filter(token => token !== req.body.token)];
+    return res.sendStatus(204);
+})
 
 // TODO: Refresh tokens
 app.post('/token', (req, res) => {
