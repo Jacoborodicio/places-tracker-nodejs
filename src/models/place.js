@@ -23,6 +23,6 @@ const PlaceSchema = new mongoose.Schema({
         ref: 'Annotation'
     }],
     userOwner: String
-});
+}, {timestamps: true});
 
 module.exports = mongoose.model('Place', PlaceSchema);

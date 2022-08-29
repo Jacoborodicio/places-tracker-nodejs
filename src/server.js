@@ -35,7 +35,8 @@ app.get('/google/callback',
 
 // Mongodb connection
 mongoose.connect(process.env.MONGODB_URI)
-    .then(() => console.log('Connected to MongoDB Atlas'))
+    .then(() => {
+        console.log('Connected to MongoDB Atlas');
+        app.listen(port, () => console.log('Server running on port ', port));
+    })
     .catch((error) => console.log('File: server.js, Function: Error connecting to MongoDB Atlas, Line 17 --> error: ', error));
-
-app.listen(port, () => console.log('Server running on port ', port));

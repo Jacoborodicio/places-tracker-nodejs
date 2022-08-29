@@ -12,6 +12,6 @@ const annotationSchema = new Schema({
     },
     note: String,
     createdAt: Date
-});
+}, {timestamps: true});
 
 module.exports = mongoose.model('Annotation', annotationSchema);
