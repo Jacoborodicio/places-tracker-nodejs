@@ -33,24 +33,27 @@ router.post('/users', async (req, res) => {
 })
 
 // login
-// router.post('/users/login',  async (req, res) => {
-//     const user = await UserSchema.findOne({email: req.body.email});
-//     // If the user email is not in DB
-//     if (user == null) return res.status(400).json({errorCode: 400, message: `User with email ${req.body.email} not found`});
-//     try {
-//         if (await bcrypt.compare(req.body.password, user['password'])) {
-//             const userJson = user.toJSON();
-//             const accessToken = jwt.sign(userJson, process.env.ACCESS_TOKEN_SECRET);
-//             // TODO: should we send the user? Info is already in the token...
-//             res.status(200).json({...userJson, accessToken});
-//         } else {
-//             res.status(401).json({errorCode: 401, message: `Password for the user with email ${req.body.email} is incorrect`});
-//         }
-//     } catch (err) {
-//         console.log('%cFile: user.js, Function: er, Line 39 err: ', 'color: pink', err);
-//         res.status(500).json({error: err, errorCode: 500, message: 'There was an error when trying to login'});
-//     }
-// })
+router.post('/users/login',  async (req, res) => {
+    console.log('%cFile: user.js, Function: req, Line 37 req: ', 'color: pink', req);
+    console.log('%c here', 'color: #ecb1f2; font-style:italic');
+    const user = await UserSchema.findOne({email: req.body.email});
+    console.log('%cFile: user.js, Function: user, Line 38 user: ', 'color: pink', user);
+    // If the user email is not in DB
+    if (user == null) return res.status(400).json({errorCode: 400, message: `User with email ${req.body.email} not found`});
+    try {
+        if (await bcrypt.compare(req.body.password, user['password'])) {
+            const userJson = user.toJSON();
+            const accessToken = jwt.sign(userJson, process.env.ACCESS_TOKEN_SECRET);
+            // TODO: should we send the user? Info is already in the token...
+            res.status(200).json({...userJson, accessToken});
+        } else {
+            res.status(401).json({errorCode: 401, message: `Password for the user with email ${req.body.email} is incorrect`});
+        }
+    } catch (err) {
+        console.log('%cFile: user.js, Function: er, Line 39 err: ', 'color: pink', err);
+        res.status(500).json({error: err, errorCode: 500, message: 'There was an error when trying to login'});
+    }
+})
 
 // get all users
 router.get('/users', (req, res) => {
