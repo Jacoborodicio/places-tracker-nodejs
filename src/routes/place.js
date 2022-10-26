@@ -5,6 +5,7 @@ const router = express.Router();
 const PlacesController = require('../controllers/users');
 // create a place
 router.post('/places', (req, res) => {
+    console.log('%cFile: place.js, Function: ins, Line 8 req: ', 'color: pink', req);
     const place = PlaceSchema(req.body);
     console.log(place);
     place.save().then((data) => res.json(data)).catch((error) => res.json({message: error}));
