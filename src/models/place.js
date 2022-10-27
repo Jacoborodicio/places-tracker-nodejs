@@ -7,7 +7,7 @@ const PlaceSchema = new mongoose.Schema({
     },
     image: String,
     imageDescription: String,
-    stars: Number,
+    thumbsUp: Number,
     ratio: Number,
     discoveredAt: Date,
     lastTimeVisited: Date,
@@ -18,6 +18,7 @@ const PlaceSchema = new mongoose.Schema({
     address: String,
     distance: Number,
     distanceUnit: String,
+    favourite: Boolean,
     annotations: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Annotation'
