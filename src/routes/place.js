@@ -3,11 +3,56 @@ const PlaceSchema = require('../models/place');
 const annotationSchema = require('../models/annotation');
 const router = express.Router();
 const PlacesController = require('../controllers/users');
+const multer = require('multer');
+const path = require("path");
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        console.log('%cFile: place.js, Function: destination, Line 10 file: ', 'color: pink', file);
+        cb(null, 'uploads')
+    },
+    filename: (req, file, cb) => {
+        console.log('%cFile: place.js, Function: filename, Line 14 file: ', 'color: pink', file);
+        // Setting the name with the current name + filename
+        cb(null, Date.now() + path.extname(file.originalname) + `.${file?.mimetype.split('/')[1]}`)
+    }
+})
+const upload = multer({storage})
+// const upload = multer({dest: 'uploads/'})
+
+
+router.post('/imgTest', upload.single('placeImage'), (req, res, next) => {
+    let {placeData} = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
+    console.log('%cFile: place.js, Function: placeData, Line 26 placeData: ', 'color: pink', placeData);
+    placeData = JSON.parse(placeData);
+    console.log({name: placeData.name})
+    // const info = JSON.parse(req.body);
+    // console.log('%cFile: place.js, Function: info, Line 25 info: ', 'color: pink', info);
+    // console.log('%cFile: place.js, Function: req.files, Line 26 req.files: ', 'color: pink', req.files);
+    const placeImage = req.file;
+    console.log('placeImage: ', placeImage)
+    res.send(`Uploaded: ${placeImage?.originalname}`)
+})
 // create a place
-router.post('/places', (req, res) => {
-    console.log('%cFile: place.js, Function: ins, Line 8 req: ', 'color: pink', req);
-    const place = PlaceSchema(req.body);
-    console.log(place);
+// router.post('/places', upload.single('placeImage'), (req, res) => {
+//     // let {placeData} = JSON.parse(JSON.stringify(req.body));
+//     // placeData = JSON.parse(placeData);
+//     console.log('%cFile: place.js, Function: placeData, Line 38 placeData: ', 'color: pink', placeData);
+//     // const placeImage = req.file;
+//     // placeData['image'] = path.join(__dirname, placeImage.path);
+//     // const place = PlaceSchema(placeData);
+//     // place.save().then((data) => res.json(data)).catch((error) => res.json({message: error}));
+//     // res.send(`${placeData}`)
+//     res.send('ok')
+// })
+
+router.post('/places', upload.single('placeImage'), (req, res) => {
+    let entry = JSON.parse(JSON.stringify(req.body));
+    let placeData = entry?.placeData;
+    placeData = JSON.parse(placeData);
+    const placeImage = req.file;
+    placeData['image'] = placeImage.path;
+    console.log('%cFile: place.js, Function: placeImage, Line 55 placeImage: ', 'color: pink', placeImage);
+    const place = PlaceSchema(placeData);
     place.save().then((data) => res.json(data)).catch((error) => res.json({message: error}));
 })
 
