@@ -8,6 +8,7 @@ const path = require("path");
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         console.log('%cFile: place.js, Function: destination, Line 10 file: ', 'color: pink', file);
+        // TODO: Change the path properly
         cb(null, 'uploads')
     },
     filename: (req, file, cb) => {

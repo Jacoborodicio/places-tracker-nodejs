@@ -21,6 +21,14 @@ app.get('/', (req, res) => {
     res.send("Welcome to my api");
 })
 
+app.get('/places-tracker/uploads/:imgName', (req, res) => {
+    console.log('%c in upload', 'color: #ecb1f2; font-style:italic');
+    const {imgName} = req.params;
+    console.log('%cFile: index.js, Function: dir, Line 27 __dirname: ', 'color: pink', __dirname);
+    console.log('%cFile: place.js, Function: imagn, Line 80 imgName: ', 'color: pink', imgName);
+    res.sendFile(__dirname + `/uploads/${imgName}`);
+})
+
 // Mongodb connection
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('Connected to MongoDB Atlas'))
