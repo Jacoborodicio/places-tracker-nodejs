@@ -5,6 +5,7 @@ const router = express.Router();
 const PlacesController = require('../controllers/users');
 const multer = require('multer');
 const path = require("path");
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         let dest = __dirname.replace('routes', 'uploads');
@@ -31,6 +32,13 @@ router.post('/places', upload.single('placeImage'), (req, res) => {
 router.get('/places', (req, res) => {
     PlaceSchema
         .find().populate('annotations')
+        .then((data) => res.json(data))
+        .catch((error) => res.json({message: error}));
+})
+
+router.get('/places/favourite', (req, res) => {
+    PlaceSchema
+        .find({favourite: true}).populate('annotations')
         .then((data) => res.json(data))
         .catch((error) => res.json({message: error}));
 })
