@@ -20,7 +20,7 @@ const upload = multer({storage})
 
 router.post('/places', upload.single('placeImage'), (req, res) => {
     let entry = JSON.parse(JSON.stringify(req.body));
-    let placeData = entry?.placeData;
+    let placeData = entry? entry.placeData : '';
     placeData = JSON.parse(placeData);
     const placeImage = req.file;
     placeData['image'] = 'uploads/' + placeImage.filename;
