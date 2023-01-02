@@ -19,6 +19,10 @@ app.get('/places-tracker/uploads/:imgName', (req, res) => {
     const {imgName} = req.params;
     res.sendFile(__dirname + `/uploads/${imgName}`);
 })
+app.get('/api/v1/uploads/:imgName', (req, res) => {
+    const {imgName} = req.params;
+    res.sendFile(__dirname + `/uploads/${imgName}`);
+})
 
 // Mongodb connection
 mongoose.connect(process.env.MONGODB_URI)

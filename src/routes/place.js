@@ -22,8 +22,8 @@ router.post('/places', upload.single('placeImage'), (req, res) => {
     let entry = JSON.parse(JSON.stringify(req.body));
     let placeData = entry? entry.placeData : '';
     placeData = JSON.parse(placeData);
-    const placeImage = req.file;
-    placeData['image'] = 'uploads/' + placeImage.filename;
+    const placeImage = req.hasOwnProperty('file') ? req.file : undefined;
+    placeData['image'] = placeImage ? 'uploads/' + placeImage.filename : '';
     const place = PlaceSchema(placeData);
     place.save().then((data) => res.json(data)).catch((error) => res.json({message: error}));
 })
@@ -66,7 +66,6 @@ router.patch('/places/:id', (req, res) => {
 // Delete place by id
 router.delete('/places/:id', (req, res) => {
     const {id} = req.params;
-    console.log('id inside place delete: ', id)
     PlaceSchema
         .deleteOne({ _id: id })
         .then((data) => res.json(data))
@@ -78,10 +77,8 @@ router.post('/places/:id/annotation', (req, res) => {
     const {id} = req.params;
     PlaceSchema.findById(id)
         .then(data => {
-            console.log('File: place.js, Function: then, Line 62 --> data: ', data);
             const annotation = annotationSchema(req.body);
             const place = PlaceSchema(data);
-            console.log('File: place.js, Function: post with annotation, Line 52 --> place, annotation: ', place, annotation);
             annotation.place = data;
             place.annotations.push(annotation);
             annotation.save().then(annotationResponse => {

@@ -37,10 +37,7 @@ router.patch('/users/:id', (req, res) => {
 
 // Delete user by id
 router.delete('/users/:id', (req, res) => {
-    // console.log('%c Inside users', 'color: #ecb1f2; font-style:italic');
     const {id} = req.params;
-    console.log(id)
-    // console.log('%cFile: user.js, Function: in delete user, Line 41 id: ', 'color: pink', id);
     UserSchema
         .deleteOne({ _id: id })
         .then((data) => res.json(data))
