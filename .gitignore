@@ -1,3 +1,6 @@
+# Uploads (user-generated files)
+src/uploads/
+
 # Logs
 logs
 *.log
